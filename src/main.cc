@@ -16,6 +16,49 @@ bool hits_sphere(const point3& center, double radius, const ray& r) {
     return b * b - 4 * a * c >= 0;
 }
 
+color ray_color(const ray& r) {
+    if (hits_sphere(point3(0, 0, -1), 0.5, r))
+        return color(1, 0, 0);
+
+    // sky: blend white -> light blue based on how far up the ray points
+    vec3 dir = unit_vector(r.direction());
+    double t = 0.5 * (dir.y() + 1.0);   // y is in [-1,1], squash to [0,1]
+
+    color white(1.0, 1.0, 1.0);
+    color blue(0.5, 0.7, 1.0);
+    return (1.0 - t) * white + t * blue;
+}
+
+int main() {
+    //image
+    const double aspect_ratio = 16.0 / 9.0;
+    const int width = 400;
+    int height = int(width / aspect_ratio);
+    if (height < 1) height = 1;
+
+    //camera
+    // viewport = the rectangle in 3D space the image gets projected onto.
+    // use the real width/height ratio since height got rounded
+    const double focal_length = 1.0;
+    const double view_h = 2.0;
+    const double view_w = view_h * (double(width) / height);
+    const point3 eye(0, 0, 0);
+
+    // edges of the viewport. v points down because pixel rows go top -> bottom
+    vec3 across(view_w, 0, 0);
+    vec3 down(0, -view_h, 0);
+
+    // step between neighbouring pixels
+    vec3 du = across / width;
+    vec3 dv = down / height;
+
+    // camera looks down -z. find the top-left corner, then nudge half a pixel
+    // in so rays go through pixel centres instead of corners
+    point3 top_left = eye - vec3(0, 0, focal_length) - across / 2 - down / 2;
+    point3 first_pixel = top_left + 0.5 * (du + dv);
+
+    //render
+    std::cout << "P3\n" << width << ' ' << height << "\n255\n";
 
     for (int j = 0; j < height; ++j) {
         std::clog << "\rScanlines remaining: " << (height - j) << ' ' << std::flush;
