@@ -1,25 +1,29 @@
-#include <iostream>
 #include "color.h"
+#include "ray.h"
 #include "vec3.h"
 
 #include <iostream>
 
-int main() {
-    //image
-    int image_width = 256;
-    int image_height = 256;
+// does the ray hit the sphere at all? solve |P(t) - center|^2 = r^2 for t
+// and just check the discriminant. negative = no real roots = miss
+bool hits_sphere(const point3& center, double radius, const ray& r) {
+    vec3 oc = center - r.origin();
 
-    //render
-    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    double a = dot(r.direction(), r.direction());
+    double b = -2.0 * dot(r.direction(), oc);
+    double c = dot(oc, oc) - radius * radius;
 
-        //progress indicator
-        for (int j = 0; j < image_height; ++j) {
-            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
+    return b * b - 4 * a * c >= 0;
+}
 
-        for (int i = 0; i < image_width; i++) {
-            auto pixel_color = color(double(i)/(image_width-1),
-            double(j)/(image_height-1), 0);
-            write_color(std::cout, pixel_color);
+
+    for (int j = 0; j < height; ++j) {
+        std::clog << "\rScanlines remaining: " << (height - j) << ' ' << std::flush;
+
+        for (int i = 0; i < width; ++i) {
+            point3 pixel = first_pixel + i * du + j * dv;
+            ray r(eye, pixel - eye);
+            write_color(std::cout, ray_color(r));
         }
     }
 
