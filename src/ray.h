@@ -5,7 +5,7 @@
 
 // a ray is a starting point plus a direction: P(t) = origin + t*dir
 class ray {
-  public:
+public:
     ray() {}
     ray(const point3& origin, const vec3& dir) : origin_(origin), dir_(dir) {}
 
@@ -17,7 +17,7 @@ class ray {
         return origin_ + t * dir_;
     }
 
-  private:
+private:
     point3 origin_;
     vec3 dir_;
 };
