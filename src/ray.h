@@ -3,19 +3,23 @@
 
 #include "vec3.h"
 
+// a ray is a starting point plus a direction: P(t) = origin + t*dir
 class ray {
-public:
+  public:
     ray() {}
-    ray(const point3& origin, const vec3& direction) : orig(origin), dir(direction) {}
+    ray(const point3& origin, const vec3& dir) : origin_(origin), dir_(dir) {}
 
-    const point3& origin() const { return orig; }
-    const vec3& direction() const { return dir; }
+    const point3& origin() const { return origin_; }
+    const vec3& direction() const { return dir_; }
 
-    point3 at(double t) const { return orig + t * dir; }
+    // walk t units along the ray (dir isn't normalized, so t is in units of |dir|)
+    point3 at(double t) const {
+        return origin_ + t * dir_;
+    }
 
-private:
-    point3 orig;
-    vec3 dir;
+  private:
+    point3 origin_;
+    vec3 dir_;
 };
 
 #endif

@@ -2,6 +2,8 @@
 #include "color.h"
 #include "vec3.h"
 
+#include <iostream>
+
 int main() {
     //image
     int image_width = 256;
@@ -12,7 +14,7 @@ int main() {
 
         //progress indicator
         for (int j = 0; j < image_height; ++j) {
-        std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
+            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
 
         for (int i = 0; i < image_width; i++) {
             auto pixel_color = color(double(i)/(image_width-1),
