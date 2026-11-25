@@ -4,16 +4,16 @@
 
 #include <iostream>
 
-// does the ray hit the sphere at all? solve |P(t) - center|^2 = r^2 for t
-// and just check the discriminant. negative = no real roots = miss
-bool hits_sphere(const point3& center, double radius, const ray& r) {
+// returns the t where the ray first hits the sphere, or -1 if it misses
+double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = center - r.origin();
+    double a = r.direction().length_squared();
+    double h = dot(r.direction(), oc);          // b = -2h, so the 2s and 4 cancel
+    double c = oc.length_squared() - radius * radius;
 
-    double a = dot(r.direction(), r.direction());
-    double b = -2.0 * dot(r.direction(), oc);
-    double c = dot(oc, oc) - radius * radius;
-
-    return b * b - 4 * a * c >= 0;
+    double disc = h * h - a * c;
+    if (disc < 0) return -1.0;
+    return (h - std::sqrt(disc)) / a;           // smaller root = closer hit
 }
 
 color ray_color(const ray& r) {
